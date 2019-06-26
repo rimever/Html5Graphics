@@ -7,7 +7,7 @@
         context.drawImage(image, 0, 0);
         var imageData = context.getImageData(0, 0, image.width, image.height);
         var width = 4 * imageData.width;
-        var height = 10;
+        var height = 100;
         for (var i = 0; i < width * height; i += 4) {
             imageData.data[i + 0] = 0;
             imageData.data[i + 1] = 255;
