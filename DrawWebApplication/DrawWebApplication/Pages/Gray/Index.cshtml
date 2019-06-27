@@ -1,0 +1,56 @@
+﻿@page
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>グレースケール画像を表示する</title>
+    <script>
+        function clamp(x, min, max) {
+            if (x < min) return min;
+            if (x > max) return max;
+            return x;
+        }
+        function start() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+
+            var image = new Image();
+            image.onload = function () {
+                context.drawImage(image, 0, 0);
+                var imageData = context.getImageData(0, 0, image.width, image.height);
+                var pixel = imageData.data;
+                var width = 4 * imageData.width;
+                var height = imageData.height;
+                var result = new Uint8ClampedArray(imageData.data.length);
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        var i = (x + y * width) * 4;
+                        var red = pixel[i + 0];
+                        var green = pixel[i + 1];
+                        var blue = pixel[i + 2];
+                        var gray = 0.30 * red + 0.59 * green + 0.11 * blue;
+                        for (var j = 0; j < 3; j++) {
+                            result[i + j] = gray;
+                        }
+                        result[i + 3] = pixel[i + 3];
+                    }
+                }
+                imageData.data.set(result);
+                context.putImageData(imageData, 0, 0);
+            }
+            image.src = "../../images/Image.png";
+        }
+
+    </script>
+</head>
+<body onload="start()">
+<canvas id="canvas" width="1920" height="1080">
+    Canvasをサポートしたブラウザを使用してください。
+</canvas>
+</body>
+</html>

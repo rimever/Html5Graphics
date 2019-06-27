@@ -1,0 +1,44 @@
+﻿@page
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>コントラストを変更する</title>
+    <script>
+        function start() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+
+            var image = new Image();
+            image.onload = function () {
+                context.drawImage(image, 0, 0);
+                var imageData = context.getImageData(0, 0, image.width, image.height);
+                var pixel = imageData.data;
+                var length = pixel.length;
+                var width = 4 * imageData.width;
+                var height = imageData.height;
+                var a = 4;
+                // 明暗の差を大きくする
+                for (var i = 0; i < width * height; i += 4) {
+                    for (var j = 0; j < 3; j++) {
+                        pixel[i + j] = (pixel[i + j] - 128) * a + 128;
+                    }
+                }
+                context.putImageData(imageData, 0, 0);
+            }
+            image.src = "../../images/Image.png";
+        }
+
+    </script>
+</head>
+<body onload="start()">
+    <canvas id="canvas" width="1920" height="1080">
+        Canvasをサポートしたブラウザを使用してください。
+    </canvas>
+</body>
+</html>

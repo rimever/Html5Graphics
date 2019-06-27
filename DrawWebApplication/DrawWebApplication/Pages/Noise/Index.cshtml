@@ -1,0 +1,57 @@
+﻿@page
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ノイズを入れる</title>
+    <script>
+        function clamp(x, min, max) {
+            if (x < min) return min;
+            if (x > max) return max;
+            return x;
+        }
+        function start() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+
+            var image = new Image();
+            image.onload = function () {
+                context.drawImage(image, 0, 0);
+                var imageData = context.getImageData(0, 0, image.width, image.height);
+                var pixel = imageData.data;
+                var width = 4 * imageData.width;
+                var height = imageData.height;
+                var result = new Uint8ClampedArray(imageData.data.length);
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        var area = 5;
+                        var randomValue = ~~(Math.random() * area) - ~~(area / 2);
+                        var randomX = clamp(x + randomValue, 0, width - 1);
+                        var randomY = clamp(y + randomValue, 0, height - 1);
+
+                        var i = (x + y * width) * 4;
+                        var swapIndex = (randomX + randomY * width) * 4;
+                        for (var j = 0; j < 4; j++) {
+                            result[i + j] = pixel[swapIndex + j];
+                        }
+                    }
+                }
+                imageData.data.set(result);
+                context.putImageData(imageData, 0, 0);
+            }
+            image.src = "../../images/Image.png";
+        }
+
+    </script>
+</head>
+<body onload="start()">
+<canvas id="canvas" width="1920" height="1080">
+    Canvasをサポートしたブラウザを使用してください。
+</canvas>
+</body>
+</html>
